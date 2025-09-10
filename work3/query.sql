@@ -34,7 +34,9 @@ FROM (
     SELECT DISTINCT toDate(timestamp) AS day
     FROM default.churn_submits
 ) AS days
-JOIN default.churn_submits AS cs
-    ON toDate(cs.timestamp) BETWEEN days.day - 6 AND days.day
+CROSS JOIN default.churn_submits AS cs
+WHERE
+    toDate(cs.timestamp) >= days.day - 6
+    AND toDate(cs.timestamp) <= days.day
 GROUP BY day
 ORDER BY day;
