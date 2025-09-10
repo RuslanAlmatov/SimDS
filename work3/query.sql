@@ -27,17 +27,14 @@
 -- Выбрать ClickHouse и найти в списке необходимые таблицы.
 
 
-SELECT 
+SELECT
     day,
     COUNT(DISTINCT user_id) AS wau
 FROM (
-    SELECT 
-        DISTINCT DATE(timestamp) AS day
+    SELECT DISTINCT toDate(timestamp) AS day
     FROM default.churn_submits
 ) AS days
-CROSS JOIN default.churn_submits AS cs
-WHERE 
-    cs.timestamp >= days.day - INTERVAL 6 DAY 
-    AND cs.timestamp <= days.day + INTERVAL 1 DAY - INTERVAL 1 SECOND
+JOIN default.churn_submits AS cs
+    ON toDate(cs.timestamp) BETWEEN days.day - 6 AND days.day
 GROUP BY day
 ORDER BY day;
