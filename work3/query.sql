@@ -27,8 +27,17 @@
 -- Выбрать ClickHouse и найти в списке необходимые таблицы.
 
 
-select cast(timestamp as date) as day, count(submit_id) as wau
-from default.churn_submits
-where 1=1
-and timestamp <= (today() - interval 7 day)
-group by cast(timestamp as date)
+SELECT 
+    day,
+    COUNT(DISTINCT user_id) AS wau
+FROM (
+    SELECT 
+        DISTINCT DATE(timestamp) AS day
+    FROM default.churn_submits
+) AS days
+CROSS JOIN default.churn_submits AS cs
+WHERE 
+    cs.timestamp >= days.day - INTERVAL 6 DAY 
+    AND cs.timestamp <= days.day + INTERVAL 1 DAY - INTERVAL 1 SECOND
+GROUP BY day
+ORDER BY day;
