@@ -27,7 +27,7 @@
 -- Выбрать ClickHouse и найти в списке необходимые таблицы.
 
 
-select count(submit_id), cast(timestamp as date) as dt
+select cast(timestamp as date) as day, count(submit_id) as wau
 from default.churn_submits
 where 1=1
 and timestamp <= (today() - interval 7 day)
